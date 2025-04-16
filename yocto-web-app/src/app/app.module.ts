@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MainComponent } from './main/main.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { TopbarComponent } from './topbar/topbar.component';
 
 const appRoutes:Routes=[
   {path:'', component: MainComponent},
@@ -15,7 +17,9 @@ const appRoutes:Routes=[
 @NgModule({
   declarations: [
     AppComponent,
-    MainComponent
+    MainComponent,
+    SidebarComponent,
+    TopbarComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
