@@ -8,9 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { MainComponent } from './main/main.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
+import { PuertasComponent } from './puertas/puertas.component';
 
 const appRoutes:Routes=[
   {path:'', component: MainComponent},
+  {path:'puertas', component: PuertasComponent},
   //{path:'**', component: NotFoundComponent},
 ]
 
@@ -19,7 +21,8 @@ const appRoutes:Routes=[
     AppComponent,
     MainComponent,
     SidebarComponent,
-    TopbarComponent
+    TopbarComponent,
+    PuertasComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
