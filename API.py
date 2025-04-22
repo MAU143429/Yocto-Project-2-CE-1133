@@ -73,13 +73,17 @@ def capture():
 
         # Retornar la ruta para que Angular pueda mostrarla
         return jsonify({
-            'status': 'success',
+            'status': 'Ok',
             'imageUrl': '/image/captura.jpg'
         })
     except subprocess.CalledProcessError as e:
-        return jsonify({'status': 'error', 'message': 'Error al ejecutar fswebcam'}), 500
+        return jsonify({'status': 'Error',
+                'response': '',
+                'error': 'Error al ejecutar fswebcam'})
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        return jsonify({'status': 'Error',
+                'response': '',
+                'error': 'str(e)'})
 
 # Endpoint para servir la imagen capturada
 @app.route('/image/<filename>', methods=['GET'])

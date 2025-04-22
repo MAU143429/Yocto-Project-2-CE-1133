@@ -1,64 +1,83 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'yocto_project'  # llave para la encriptación
 
-# Dummy database
-users = {'user1': generate_password_hash('password1')}
+# Configurar SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Las pantallas home, dashboard e index serán reemplazadas en el siguiente commit
-
-@app.route('/')
-def home():
-    if 'username' in session:
-        # Si inicia sesión, se confirma con algun mensaje
-        return redirect(url_for('dashboard')) 
-        # Pantalla de inicio de sesión
-    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Confirms username and password then log into session
 
-    Returns:
-        html template: Directs the user to a page matching their login info
-    """
-    if request.method == 'POST':
+    if request.is_json:
+        data = request.get_json()
         username = request.form['username']
         password = request.form['password']
+        user = User.query.filter_by(username=username).first()
         if username in users and check_password_hash(users[username], password):
             session['username'] = username
-            # Si inicia sesión, se envia a la aplicación
-            return redirect(url_for('dashboard'))
+            return jsonify({
+                'status': 'Ok',
+                'response': {'username': username},
+                'error': ''
+            })
         else:
-            return render_template('index.html', error='Invalid username or password.')
-    return redirect(url_for('home'))
+            return jsonify({
+                'status': 'Error',
+                'response': '',
+                'error': 'Usuario o contraseña inválidos'
+            })
+    else:
+        return jsonify({
+            'status': 'Error',
+            'response': '',
+            'error': 'No es formato JSON'
+        })
 
 
 @app.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username in users:
-            return render_template('register.html', error='Username already exists.')
-        else:
-            users[username] = generate_password_hash(password)
-            session['username'] = username
-            return redirect(url_for('dashboard'))
-    return render_template('register.html')
 
-@app.route('/dashboard')
-def dashboard():
-    if 'username' in session:
-        return render_template('dashboard.html', username=session['username'])
-    return redirect(url_for('home'))
+    if request.is_json:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+    else:
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return redirect(url_for('home'))
+    # Verificamos si el usuario ya existe
+    user = User.query.filter_by(username=username).first()
+    if user:
+        # Si es JSON, devolvemos JSON
+        if request.is_json:
+            return jsonify({
+                'status': 'Error',
+                'response': '',
+                'error': 'Ya existe el usuario'
+            })
+    else: 
+        # Crear nuevo usuario
+        new_user = User(username=username)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['username'] = username
 
-if __name__ == '__main__':
+        if request.is_json:
+            return jsonify({
+                'status': 'Ok',
+                'response': {'username': username},
+                'error': ''
+            })
+
+if __name__ in '__main__':
+    # Create a db and table
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
