@@ -76,6 +76,15 @@ def register():
                 'error': ''
             })
 
+@app.route('/')
+def index():
+    return jsonify({
+        'status': 'Ok',
+        'response': 'API Flask funcionando correctamente',
+        'error': ''
+    })
+
+
 if __name__ in '__main__':
     # Create a db and table
     with app.app_context():
