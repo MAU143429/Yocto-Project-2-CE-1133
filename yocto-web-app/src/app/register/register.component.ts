@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'app-register',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
+  constructor(private sharedService: SharedService) { }
 
+  cambiarRegister(){
+    this.sharedService.cambiarRegister();
+  }
 }

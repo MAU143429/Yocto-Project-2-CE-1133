@@ -18,6 +18,8 @@ const appRoutes:Routes=[
   {path:'', component: MainComponent},
   {path:'puertas', component: PuertasComponent},
   {path:'camara', component: CamaraComponent},
+  {path:'login', component: LoginComponent},
+  {path:'register', component: RegisterComponent},
   //{path:'**', component: NotFoundComponent},
 ]
 
@@ -38,7 +40,8 @@ const appRoutes:Routes=[
     BrowserModule,
     AppRoutingModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

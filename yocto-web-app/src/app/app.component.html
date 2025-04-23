@@ -1,7 +1,13 @@
-<div *ngIf="login">
-    <app-login></app-login>
-  </div>
-  
-  <div *ngIf="!login">
-    <app-base></app-base>
-  </div>
+<div *ngIf="registro">
+  <app-register></app-register>
+</div>
+
+<div *ngIf="!registro">
+      <div *ngIf="login">
+        <app-login></app-login>
+      </div>
+      
+      <div *ngIf="!login">
+        <app-base></app-base>
+      </div>
+</div>

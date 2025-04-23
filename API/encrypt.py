@@ -41,13 +41,14 @@ class User(db.Model):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.is_json:
-        data = request.get_json()
-        username = request.form['username']
-        password = request.form['password']
+        data = request.get_json()  # Obtiene el JSON del cuerpo
+        username = data.get('username')  # Usa .get() para evitar KeyError
+        password = data.get('password')
+
         user = User.query.filter_by(username=username).first()
-        if username in users and check_password_hash(users[username], password):
+        
+        if user and check_password_hash(user.password, password):
             session['username'] = username
             return jsonify({
                 'status': 'Ok',
@@ -59,13 +60,13 @@ def login():
                 'status': 'Error',
                 'response': '',
                 'error': 'Usuario o contraseña inválidos'
-            })
+            }), 401  # Código 401 para no autorizado
     else:
         return jsonify({
             'status': 'Error',
             'response': '',
-            'error': 'No es formato JSON'
-        })
+            'error': 'Se esperaba formato JSON'
+        }), 400  # Código 400 para bad request
 
 
 @app.route('/register', methods=['POST'])

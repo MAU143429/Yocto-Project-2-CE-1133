@@ -10,12 +10,19 @@ export class APIService {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     }),
-    withCredentials: true  // Esto envía cookies/sesión
+    withCredentials: true  // Importante para manejar sesiones/cookies
   };
-  constructor(private http:HttpClient) { }
 
+  constructor(private http: HttpClient) { }
 
-  // GETS 
+  loginRequest(formData: any) {
+    const body = {
+      username: formData.username,
+      password: formData.password
+    };
+    return this.http.post(`${this.apiUrl}/login`, body, this.httpOptions);
+  }
+
   getPrueba() {
     return this.http.get(`${this.apiUrl}/prueba`, this.httpOptions);
   }
