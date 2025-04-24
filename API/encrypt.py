@@ -49,9 +49,9 @@ def login(username, password):
             'response': {'username': username},
             'error': ''
         })
-
+    
     if user and check_password_hash(user.password, password):
-        #session['username'] = username
+        session['username'] = username
         return jsonify({
             'status': 'ok',
             'response': {'username': username},
@@ -92,7 +92,7 @@ def register(username, password):
 @app.route('/')
 def index():
     return jsonify({
-        'status': 'Ok',
+        'status': 'ok',
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })
@@ -100,7 +100,7 @@ def index():
 @app.route('/prueba', methods=['GET'])
 def prueba():
     return jsonify({
-        'status': 'Ok',
+        'status': 'ok',
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })
