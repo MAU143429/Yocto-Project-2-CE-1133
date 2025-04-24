@@ -27,7 +27,7 @@ light_states = {
     "luz2": False,
     "luz3": False,
     "luz4": False,
-    "luz5": False,
+    "luz5": True,
 }
 
 class User(db.Model):
@@ -137,11 +137,11 @@ def get_light(light_id):
 @app.route('/lights', methods=['GET'])
 def get_all_lights():
     # Convertimos los booleanos a "ON" o "OFF"
-    lights_status = {name: "ON" if state else "OFF" for name, state in light_states.items()}
+        
     
     return jsonify({
         "status": "ok",
-        "response": lights_status,
+        "response": light_states,
         "error": ""
     })
 

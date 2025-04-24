@@ -52,15 +52,12 @@ def toggle_light(light_id, value):
         })
 
 
-@app.route('/get_light/<light_id>', methods=['GET', 'OPTIONS'])
+@app.route('/get_light/<light_id>', methods=['GET'])
 def get_light_state(light_id):
-    if request.method == 'OPTIONS':
-        return {}, 200  # Respuesta vacía para preflight
-    
-    if light_id in PIN_OUTPUTS:
+    if int(light_id) in PIN_OUTPUTS:
         return jsonify({
             "status": "ok",
-            "response": "1",
+            "response": 0,
             "error": ""
         })
     else:
@@ -76,10 +73,10 @@ def get_door_state(door_id):
     if request.method == 'OPTIONS':
         return {}, 200  # Respuesta vacía para preflight
     
-    if door_id in PIN_INPUTS:
-        return jsonify({
+    if int(door_id) in PIN_INPUTS:
+        return jsonify({ 
             "status": "ok",
-            "response": "1",
+            "response": "0",
             "error": ""
         })
     else:
@@ -92,7 +89,7 @@ def get_door_state(door_id):
 # Endpoint para servir la imagen capturada
 @app.route('/capture', methods=['GET'])
 def get_image():
-    IMAGE_TEST_PATH = os.path.join(os.getcwd(), "/Users/pepev/OneDrive/Documentos/GitHub/Yocto-Project-1-CE-1113/API/manzana.jpg")
+    IMAGE_TEST_PATH = os.path.join(os.getcwd(), "/Users/sebastianqr.2208/Documents/EMPOTRADOS/Yocto-Project-2-CE-1133/API/manzana.jpg")
     # IMAGE_TEST_PATH = os.path.join(os.getcwd(), "API/manzana.jpg")
     print("Este es el image path " + IMAGE_TEST_PATH)
         # Verificar que la imagen existe
@@ -106,6 +103,14 @@ def get_image():
 def index():
     return jsonify({
         'status': 'Ok',
+        'response': 'API Flask funcionando correctamente',
+        'error': ''
+    })
+
+@app.route('/prueba', methods=['GET'])
+def prueba():
+    return jsonify({
+        'status': 'ok',
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })

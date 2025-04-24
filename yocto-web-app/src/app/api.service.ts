@@ -28,8 +28,8 @@ export class APIService {
     return this.http.get(`${this.apiUrl}/prueba`, this.httpOptions);
   }
 
-  getLight() {
-    return this.http.get(`${this.apiUrl}/get_light/luz1`, this.httpOptions);
+  getLight(id: string) {
+    return this.http.get(`${this.apiUrl}/get_light/${id}`, this.httpOptions);
   }
 
   getAllLight() {
