@@ -45,11 +45,10 @@ lib.digitalRead.restype = ctypes.c_int
 lib.unexportPin.argtypes = [ctypes.c_int]
 lib.unexportPin.restype = None
 
-
+# Luces
 PIN_OUTPUTS = [5, 6, 17, 22, 27]
-PIN_INPUTS = [24]
-
-
+# Puertas
+PIN_INPUTS = [16, 23, 24, 25]
 
 
 # Configuración automatica de pines
