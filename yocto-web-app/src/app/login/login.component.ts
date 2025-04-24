@@ -17,9 +17,8 @@ export class LoginComponent {
     const valor = form.value;
     this.api.loginRequest(form.value).subscribe({
       next: (response: any) => {
-        if (response.status === 'Ok') {
+        if (response.status === 'ok') {
           console.log('Login exitoso', response);
-          // Guardar datos de sesión (ej: en localStorage)
           localStorage.setItem('username', response.response.username);
           // Redirigir al usuario (ej: usando Router)
         } else {

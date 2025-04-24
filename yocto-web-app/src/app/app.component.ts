@@ -13,6 +13,10 @@ export class AppComponent implements OnInit {
     this.sharedService.register$.subscribe(valor => {
       this.registro = valor;
     });
+
+    this.sharedService.login$.subscribe(nuevo => {
+      this.entrada = nuevo;
+    });
   }
 
   testConnection() {
@@ -27,6 +31,6 @@ export class AppComponent implements OnInit {
   }
 
   title = 'yocto-web-app';
-  login = true;
+  entrada = true;
   registro = false;
 }

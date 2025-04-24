@@ -16,11 +16,12 @@ export class APIService {
   constructor(private http: HttpClient) { }
 
   loginRequest(formData: any) {
-    const body = {
-      username: formData.username,
-      password: formData.password
-    };
-    return this.http.post(`${this.apiUrl}/login`, body, this.httpOptions);
+    return this.http.get(`${this.apiUrl}/login/${formData.username}/${formData.password}`, this.httpOptions);
+  }
+
+  registerRequest(formData: any) {
+  
+    return this.http.post(`${this.apiUrl}/register/${formData.username}/${formData.password}`, this.httpOptions);
   }
 
   getPrueba() {

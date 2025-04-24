@@ -12,22 +12,26 @@
                             <div class="text-center">
                                 <h1 class="h4 mb-4 text-white">Create an Account!</h1>
                             </div>
-                            <form class="user">
+
+
+                            <form #datos="ngForm" (ngSubmit)="registrarse(datos)" class="user">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
+                                    <input type="text" name="username" class="form-control form-control-user" id="exampleInputEmail" placeholder="Username" ngModel>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                                        <input name="password1" type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" ngModel>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
+                                        <input name="password2" type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" ngModel>
                                     </div>
                                 </div>
-                                <a class="btn btn-google btn-user btn-block">
+                                <button type="submit" class="btn btn-google btn-user btn-block">
                                     Register Account
-                                </a>
+                                </button>
                             </form>
+
+
                             <hr>
                             <div class="text-center">
                                 <a (click)="cambiarRegister()" class="small text-white">Already have an account? Login!</a>
