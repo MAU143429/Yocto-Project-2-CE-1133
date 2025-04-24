@@ -39,8 +39,8 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/login/<string:username>/<string:password>', methods=['GET'])
+def login(username, password):
     if request.is_json:
         data = request.get_json()  # Obtiene el JSON del cuerpo
         username = data.get('username')  # Usa .get() para evitar KeyError
@@ -69,8 +69,8 @@ def login():
         }), 400  # Código 400 para bad request
 
 
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/register/<string:username>/<string:password>', methods=['GET'])
+def register(username, password):
 
     if request.is_json:
         data = request.get_json()
