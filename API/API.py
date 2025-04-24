@@ -1,10 +1,28 @@
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import ctypes
 import subprocess
 import os
+
+
+app = Flask(__name__)
+CORS(app, supports_credentials=True)
+app.secret_key = 'yocto_project'  # llave para la encriptación
+
+CORS(app, resources={
+    r"/*": {
+        "origins": "http://localhost:4200",
+        "supports_credentials": True,
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
+
+# Configurar SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 # Ruta donde se guardará la imagen capturada
 IMAGE_FOLDER = os.path.join(os.getcwd(), 'imagenes')
@@ -31,22 +49,8 @@ lib.unexportPin.restype = None
 PIN_OUTPUTS = [5, 6, 17, 22, 27]
 PIN_INPUTS = [24]
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True)
-app.secret_key = 'yocto_project'  # llave para la encriptación
 
-CORS(app, resources={
-    r"/*": {
-        "origins": "http://localhost:4200",
-        "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
 
-# Configurar SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 # Configuración automatica de pines
 def setup_pins():
@@ -59,90 +63,97 @@ def setup_pins():
 # Ejecutar setup al iniciar
 setup_pins()
 
-class User(db.Model):
-    """User Model
+@app.route('/toggle-light/<light_id>/<value>', methods=['POST'])
+def toggle_light(light_id, value):
 
-    Args:
-        db (_type_): Model from SQL Alchemy
-
-    Returns:
-        string: Only check_password returns, else used to store user info
-    """
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password_hash = db.Column(db.String(150), nullable=False)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.is_json:
-        data = request.get_json()  # Obtiene el JSON del cuerpo
-        username = data.get('username')  # Usa .get() para evitar KeyError
-        password = data.get('password')
-
-        user = User.query.filter_by(username=username).first()
-        
-        if user and check_password_hash(user.password, password):
-            session['username'] = username
-            return jsonify({
-                'status': 'Ok',
-                'response': {'username': username},
-                'error': ''
-            })
-        else:
-            return jsonify({
-                'status': 'Error',
-                'response': '',
-                'error': 'Usuario o contraseña inválidos'
-            }), 401  # Código 401 para no autorizado
+    if light_id in PIN_OUTPUTS and value in [0, 1]:
+        lib.digitalWrite(light_id, value)
+        return jsonify({
+            "status": "ok",
+            "response": "",
+            "error": ""
+        })
     else:
         return jsonify({
-            'status': 'Error',
-            'response': '',
-            'error': 'Se esperaba formato JSON'
-        }), 400  # Código 400 para bad request
+            "status": "error",
+            "response": "",
+            "error": f'La luz "{light_id}" no existe o el valor no es válido.'
+        })
 
 
-@app.route('/register', methods=['POST'])
-def register():
-
-    if request.is_json:
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
+@app.route('/get_light/<light_id>', methods=['GET', 'OPTIONS'])
+def get_light_state(light_id):
+    if request.method == 'OPTIONS':
+        return {}, 200  # Respuesta vacía para preflight
+    
+    if light_id in PIN_OUTPUTS:
+        value = lib.digitalRead(light_id)
+        return jsonify({
+            "status": "ok",
+            "response": "{value}",
+            "error": ""
+        })
     else:
-        username = request.form.get('username')
-        password = request.form.get('password')
+        return jsonify({
+            "status": "error",
+            "response": "",
+            "error": f'La luz "{light_id}" no existe.'
+        })
 
-    # Verificamos si el usuario ya existe
-    user = User.query.filter_by(username=username).first()
-    if user:
-        # Si es JSON, devolvemos JSON
-        if request.is_json:
-            return jsonify({
-                'status': 'Error',
-                'response': '',
-                'error': 'Ya existe el usuario'
-            })
-    else: 
-        # Crear nuevo usuario
-        new_user = User(username=username)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-        session['username'] = username
 
-        if request.is_json:
-            return jsonify({
-                'status': 'Ok',
-                'response': {'username': username},
-                'error': ''
-            })
+@app.route('/get_door_state/<door_id>', methods=['GET', 'OPTIONS'])
+def get_door_state(door_id):
+    if request.method == 'OPTIONS':
+        return {}, 200  # Respuesta vacía para preflight
+    
+    if door_id in PIN_INPUTS:
+        value = lib.digitalRead(door_id)
+        return jsonify({
+            "status": "ok",
+            "response": "{value}",
+            "error": ""
+        })
+    else:
+        return jsonify({
+            "status": "error",
+            "response": "",
+            "error": f'La puerta "{door_id}" no existe.'
+        })
+
+@app.route('/capture', methods=['GET'])
+def capture():
+                
+    try:
+        # Tomar la foto con fswebcam
+        subprocess.run(
+            ['fswebcam', '-r', '1280x720', '--jpeg', '85', '-D', '1', IMAGE_PATH],
+            check=True
+        )
+
+        # Verificar que la imagen existe
+        if not os.path.exists(IMAGE_PATH):
+            return jsonify({'status': 'Error', 'error': 'Imagen no fue creada'}), 500
+
+        # Enviar directamente la imagen como respuesta
+        return send_file(IMAGE_PATH, mimetype='image/jpeg')
+
+    except subprocess.CalledProcessError:
+        return jsonify({'status': 'Error', 'error': 'Error al ejecutar fswebcam'}), 500
+    except Exception as e:
+        return jsonify({'status': 'Error', 'error': str(e)}), 500
+
+# Endpoint para servir la imagen capturada
+@app.route('/get_image', methods=['GET'])
+def get_image():
+    IMAGE_TEST_PATH = os.path.join(os.getcwd(), "/Users/pepev/OneDrive/Documentos/GitHub/Yocto-Project-1-CE-1113/API/manzana.jpg")
+    # IMAGE_TEST_PATH = os.path.join(os.getcwd(), "API/manzana.jpg")
+    print("Este es el image path " + IMAGE_TEST_PATH)
+        # Verificar que la imagen existe
+    if not os.path.exists(IMAGE_TEST_PATH):
+        return jsonify({'status': 'Error', 'error': 'La imagen no se encuentra'}), 500
+
+    # Enviar directamente la imagen como respuesta
+    return send_file(IMAGE_TEST_PATH, mimetype='image/jpg')
 
 @app.route('/')
 def index():
@@ -151,62 +162,6 @@ def index():
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })
-
-@app.route('/prueba', methods=['GET'])
-def prueba():
-    return jsonify({
-        'status': 'Ok',
-        'response': 'API Flask funcionando correctamente',
-        'error': ''
-    })
-
-# Endpoint para leer un pin de entrada
-@app.route('/read', methods=['GET'])
-def read():
-    pin = int(request.args.get('pin', 0))
-    if pin not in PIN_INPUTS:
-        return jsonify({'error': 'Pin no permitido para lectura'}), 400
-    value = lib.digitalRead(pin)
-    return jsonify({'pin': pin, 'value': value})
-
-
-# Endpoint para escribir a un pin de salida
-@app.route('/write', methods=['POST'])
-def write():
-    data = request.get_json()
-    pin = int(data.get('pin', -1))
-    value = int(data.get('value', -1))
-
-    if pin not in PIN_OUTPUTS or value not in [0, 1]:
-        return jsonify({'error': 'Pin o valor inválido'}), 400
-
-    lib.digitalWrite(pin, value)
-    return jsonify({'status': 'ok', 'pin': pin, 'value': value})
-
-@app.route('/capture', methods=['POST'])
-def capture():
-    try:
-        # Comando para capturar la imagen
-        subprocess.run(['fswebcam', '--no-banner', '-r', '720x480', IMAGE_PATH], check=True)
-
-        # Retornar la ruta para que Angular pueda mostrarla
-        return jsonify({
-            'status': 'Ok',
-            'imageUrl': '/image/captura.jpg'
-        })
-    except subprocess.CalledProcessError as e:
-        return jsonify({'status': 'Error',
-                'response': '',
-                'error': 'Error al ejecutar fswebcam'})
-    except Exception as e:
-        return jsonify({'status': 'Error',
-                'response': '',
-                'error': 'str(e)'})
-
-# Endpoint para servir la imagen capturada
-@app.route('/image/<filename>', methods=['GET'])
-def get_image(filename):
-    return send_from_directory(IMAGE_FOLDER, filename)
 
 if __name__ in '__main__':
     # Create a db and table
