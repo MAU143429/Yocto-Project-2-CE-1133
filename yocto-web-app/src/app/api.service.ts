@@ -6,11 +6,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class APIService {
   private apiUrl = 'http://127.0.0.1:5000';
-  private httpOptions = {
+  httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     }),
-    withCredentials: true  // Importante para manejar sesiones/cookies
+    withCredentials: true  // Solo si usas cookies/sesión
   };
 
   constructor(private http: HttpClient) { }
@@ -26,5 +26,13 @@ export class APIService {
 
   getPrueba() {
     return this.http.get(`${this.apiUrl}/prueba`, this.httpOptions);
+  }
+
+  getLight() {
+    return this.http.get(`${this.apiUrl}/get_light/luz1`, this.httpOptions);
+  }
+
+  getAllLight() {
+    return this.http.get(`${this.apiUrl}/lights`, this.httpOptions);
   }
 }

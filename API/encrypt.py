@@ -8,10 +8,11 @@ CORS(app, supports_credentials=True)
 app.secret_key = 'yocto_project'  # llave para la encriptación
 
 CORS(app, resources={
-    r"/*": {
+    r"/get_light/*": {
         "origins": "http://localhost:4200",
-        "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization"]
+        "methods": ["GET", "OPTIONS"],  # Añade OPTIONS explícitamente
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
     }
 })
 
@@ -114,8 +115,11 @@ def toggle_light(light_id):
             "error": f'La luz "{light_id}" no existe.'
         })
 
-@app.route('/get-light/<light_id>', methods=['GET'])
+@app.route('/get_light/<light_id>', methods=['GET', 'OPTIONS'])
 def get_light(light_id):
+    if request.method == 'OPTIONS':
+        return {}, 200  # Respuesta vacía para preflight
+    
     if light_id in light_states:
         return jsonify({
             "status": "ok",
