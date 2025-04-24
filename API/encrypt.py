@@ -41,55 +41,35 @@ class User(db.Model):
 
 @app.route('/login/<string:username>/<string:password>', methods=['GET'])
 def login(username, password):
-    if request.is_json:
-        data = request.get_json()  # Obtiene el JSON del cuerpo
-        username = data.get('username')  # Usa .get() para evitar KeyError
-        password = data.get('password')
 
-        user = User.query.filter_by(username=username).first()
-        
-        if user and check_password_hash(user.password, password):
-            session['username'] = username
-            return jsonify({
-                'status': 'Ok',
-                'response': {'username': username},
-                'error': ''
-            })
-        else:
-            return jsonify({
-                'status': 'Error',
-                'response': '',
-                'error': 'Usuario o contraseña inválidos'
-            }), 401  # Código 401 para no autorizado
+    user = User.query.filter_by(username=username).first()
+    
+    if user and check_password_hash(user.password, password):
+        session['username'] = username
+        return jsonify({
+            'status': 'ok',
+            'response': {'username': username},
+            'error': ''
+        })
     else:
         return jsonify({
-            'status': 'Error',
+            'status': 'error',
             'response': '',
-            'error': 'Se esperaba formato JSON'
-        }), 400  # Código 400 para bad request
+            'error': 'Usuario o contraseña inválidos'
+        })
 
 
 @app.route('/register/<string:username>/<string:password>', methods=['GET'])
 def register(username, password):
 
-    if request.is_json:
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
-    else:
-        username = request.form.get('username')
-        password = request.form.get('password')
-
     # Verificamos si el usuario ya existe
     user = User.query.filter_by(username=username).first()
     if user:
-        # Si es JSON, devolvemos JSON
-        if request.is_json:
-            return jsonify({
-                'status': 'Error',
-                'response': '',
-                'error': 'Ya existe el usuario'
-            })
+        return jsonify({
+            'status': 'error',
+            'response': '',
+            'error': 'Ya existe el usuario'
+        })
     else: 
         # Crear nuevo usuario
         new_user = User(username=username)
@@ -97,18 +77,16 @@ def register(username, password):
         db.session.add(new_user)
         db.session.commit()
         session['username'] = username
-
-        if request.is_json:
-            return jsonify({
-                'status': 'Ok',
-                'response': {'username': username},
-                'error': ''
-            })
+        return jsonify({
+            'status': 'ok',
+            'response': {'username': username},
+            'error': ''
+        })
 
 @app.route('/')
 def index():
     return jsonify({
-        'status': 'Ok',
+        'status': 'ok',
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })
@@ -116,7 +94,7 @@ def index():
 @app.route('/prueba', methods=['GET'])
 def prueba():
     return jsonify({
-        'status': 'Ok',
+        'status': 'ok',
         'response': 'API Flask funcionando correctamente',
         'error': ''
     })
