@@ -20,6 +20,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Diccionario para simular las 5 luces
+light_states = {
+    "luz1": False,
+    "luz2": False,
+    "luz3": False,
+    "luz4": False,
+    "luz5": False,
+}
+
 class User(db.Model):
     """User Model
 
@@ -88,6 +97,50 @@ def register(username, password):
         'response': {'username': username},
         'error': ''
     })
+
+@app.route('/toggle-light/<light_id>', methods=['POST'])
+def toggle_light(light_id):
+    if light_id in light_states:
+        light_states[light_id] = not light_states[light_id]
+        return jsonify({
+            "status": "ok",
+            "response": {light_id: "ON" if light_states[light_id] else "OFF"},
+            "error": ""
+        })
+    else:
+        return jsonify({
+            "status": "error",
+            "response": "",
+            "error": f'La luz "{light_id}" no existe.'
+        })
+
+@app.route('/get-light/<light_id>', methods=['GET'])
+def get_light(light_id):
+    if light_id in light_states:
+        return jsonify({
+            "status": "ok",
+            "response": {light_id: "ON" if light_states[light_id] else "OFF"},
+            "error": ""
+        })
+    else:
+        return jsonify({
+            "status": "error",
+            "response": "",
+            "error": f'La luz "{light_id}" no existe.'
+        })
+
+
+@app.route('/lights', methods=['GET'])
+def get_all_lights():
+    # Convertimos los booleanos a "ON" o "OFF"
+    lights_status = {name: "ON" if state else "OFF" for name, state in light_states.items()}
+    
+    return jsonify({
+        "status": "ok",
+        "response": lights_status,
+        "error": ""
+    })
+
 
 @app.route('/')
 def index():
