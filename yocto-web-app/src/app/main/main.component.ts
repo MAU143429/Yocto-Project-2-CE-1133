@@ -48,6 +48,29 @@ export class MainComponent implements OnInit {
     });
   }
 
+  saveImageLocally(imageBlob: Blob) {
+    const reader = new FileReader();
+    reader.readAsDataURL(imageBlob);
+    
+    reader.onload = () => {
+      const base64Image = reader.result as string;
+      localStorage.setItem('saved_image', base64Image);
+      
+      // Para usarla después:
+      // <img [src]="localStorage.getItem('saved_image')">
+    };
+  }
+
+  setImage(){
+    this.api.getImage().subscribe((response: Blob) => {
+      const imageBlob = new Blob([response], { type: 'image/jpeg' });
+      const imageUrl = URL.createObjectURL(imageBlob);
+      //const imgElement = document.getElementById('image') as HTMLImageElement;
+      //imgElement.src = imageUrl;
+      this.saveImageLocally(imageBlob);
+    });
+  }
+
 
   ngOnInit(): void {
     const data = {
@@ -94,6 +117,8 @@ export class MainComponent implements OnInit {
     this.shared.setDataLuces(data);
     this.estados_luces = this.shared.getLuces();
     this.setAllEstados();
+    this.setImage();
+    console.log(localStorage.getItem('saved_image'));
     /*
     this.data_luces.luz1.className = this.shared.getClaseApagado();
     this.data_luces.luz1TEXTO.className = this.shared.getTextoApagado();
@@ -104,4 +129,6 @@ export class MainComponent implements OnInit {
   toggleLightAction(id: string) {
     this.shared.setEstadoLuz(id);
   }
+
+
 }
