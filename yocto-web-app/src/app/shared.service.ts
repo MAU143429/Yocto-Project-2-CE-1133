@@ -12,11 +12,11 @@ export class SharedService {
   puertasIniciales: any = {};
 
   puertos_luces: any = {
-    luz1: 5,
-    luz2: 6,
+    luz1: 27,
+    luz2: 5,
     luz3: 17,
     luz4: 22,
-    luz5: 27
+    luz5: 6
   };
 
   constructor(private api:APIService) { }

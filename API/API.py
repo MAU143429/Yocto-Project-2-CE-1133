@@ -97,23 +97,29 @@ def get_light_state(light_id):
             "error": f'La luz "{light_id}" no existe.'
         })
 
-
-@app.route('/get_door_state/<door_id>', methods=['GET'])
-def get_door_state(door_id):
     
-    if int(door_id) in PIN_INPUTS:
-        value = lib.digitalRead(int(door_id))
-        return jsonify({
-            "status": "ok",
-            "response": value,
-            "error": ""
-        })
+def id_to_name(door_id):
+    if door_id == 16:
+        return "puerta_bano"
+    elif door_id == 23: 
+        return "puerta_delantera"
+    elif door_id == 24:
+        return "puerta_cuarto1"
     else:
-        return jsonify({
-            "status": "error",
-            "response": "",
-            "error": f'La puerta "{door_id}" no existe.'
-        })
+        return "puerta_cuarto2"
+
+@app.route('/get_all_doors_state', methods=['GET'])
+def get_all_doors_state():
+    estados = {}
+    for door_id in PIN_INPUTS:
+        id_name = id_to_name(door_id)
+        value = lib.digitalRead(int(door_id))
+        estados[id_name] = value
+    return jsonify({
+        "status": "ok",
+        "response": estados,
+        "error": ""
+    })
 
 @app.route('/capture', methods=['GET'])
 def capture():
