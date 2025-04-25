@@ -60,7 +60,7 @@ def login(username, password):
             'error': ''
         })
     
-    if user and check_password_hash(user.password, password):
+    if user and check_password_hash(user.password_hash, password):
         session['username'] = username
         return jsonify({
             'status': 'ok',
