@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { APIService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,16 @@ export class SharedService {
 
   lucesIniciales: any = {};
   puertasIniciales: any = {};
-  constructor() { }
+
+  puertos_luces: any = {
+    luz1: 5,
+    luz2: 6,
+    luz3: 17,
+    luz4: 22,
+    luz5: 27
+  };
+
+  constructor(private api:APIService) { }
 
   // VARIABLES ===================================================================================================================
   private register = new BehaviorSubject<boolean>(false);
@@ -174,4 +184,53 @@ export class SharedService {
     return this.data_puertas.getValue();
   }
 
+  cambiadorEstado(value:boolean){
+    if(value){
+      return 1;
+    }
+    else{
+      return 0;
+    }
+  }
+
+  cambiar_id_luz(id_luz: string){
+    const luces = this.puertos_luces;
+    // @ts-ignore
+    const id = luces[id_luz];
+    return id;
+  }
+
+  cambiarColorBoton(luz: string){
+    const luces = this.luces.getValue();
+    const data_luces = this.data_luces.getValue();
+    // @ts-ignore
+    if(luces[luz]){
+      data_luces[luz].className = this.getClaseEncendido();
+      data_luces[luz+"TEXTO"].className = this.getTextoEncendido();
+      data_luces[luz+"ICONO"].className = this.getIconoEncendido();
+      data_luces[luz+"ICONO"].style.color = this.getColorEncendido();
+    }
+    else{
+      data_luces[luz].className = this.getClaseApagado();
+      data_luces[luz+"TEXTO"].className = this.getTextoApagado();
+      data_luces[luz+"ICONO"].className = this.getIconoApagado();
+      data_luces[luz+"ICONO"].style.color = this.getColorApagado();
+    }
+    this.data_luces.next(data_luces);
+  }
+
+
+  setEstadoLuz(luz: string){
+    const luces = this.luces.getValue();
+    // @ts-ignore
+    luces[luz] = !luces[luz];
+    // @ts-ignore
+    this.api.setLight(this.cambiar_id_luz(luz), this.cambiadorEstado(luces[luz])).subscribe((response: any) => {
+      console.log("Estado de la luz actualizado:", response);
+      this.luces.next(luces);
+      this.cambiarColorBoton(luz);
+    }, (error: any) => {
+      console.error("Error al actualizar el estado de la luz:", error);
+    });
+  }
 }

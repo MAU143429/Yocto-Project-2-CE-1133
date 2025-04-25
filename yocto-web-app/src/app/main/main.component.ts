@@ -100,8 +100,8 @@ export class MainComponent implements OnInit {
     this.data_luces.luz1ICONO.className = this.shared.getIconoApagado();
     this.data_luces.luz1ICONO.style.color = this.shared.getColorApagado(); */
   };
-
-
-
-  //setEstado()
+  
+  toggleLightAction(id: string) {
+    this.shared.setEstadoLuz(id);
+  }
 }

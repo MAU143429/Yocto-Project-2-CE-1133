@@ -39,4 +39,8 @@ export class APIService {
   getAllLight() {
     return this.http.get(`${this.apiUrl}/lights`, this.httpOptions);
   }
+
+  setLight(id: string, value: boolean) {
+    return this.http.post(`${this.apiUrl}/toggle-light/${id}/${value}`, this.httpOptions);
+  }
 }

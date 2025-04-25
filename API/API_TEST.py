@@ -37,18 +37,20 @@ PIN_INPUTS = [16, 23, 24, 25]
 
 @app.route('/toggle-light/<light_id>/<value>', methods=['POST'])
 def toggle_light(light_id, value):
-
-    if light_id in PIN_OUTPUTS and value in [0, 1]:
+    # imprimir el tipo de dato de light_id y de value
+    print(f"Tipo de dato de light_id: {type(light_id)}")
+    print(f"Tipo de dato de value: {type(value)}")
+    if int(light_id) in PIN_OUTPUTS and int(value) in [0, 1]:
         return jsonify({
             "status": "ok",
-            "response": "La luz {light_id} cambió de valor a {value}",
+            "response": "La luz {light_id} cambió de valor a " + str(value),
             "error": ""
         })
     else:
         return jsonify({
             "status": "error",
             "response": "",
-            "error": f'La luz "{light_id}" no existe o el valor no es válido.'
+            "error": f'La luz {light_id} no existe o el valor no es válido.'
         })
 
 
@@ -74,7 +76,7 @@ def get_door_state(door_id):
     if int(door_id) in PIN_INPUTS:
         return jsonify({ 
             "status": "ok",
-            "response": 0,
+            "response": 1,
             "error": ""
         })
     else:
