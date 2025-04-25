@@ -35,7 +35,7 @@ export class CamaraComponent implements OnInit {
     });
   }
 
-  private async setImage() {
+  async setImage() {
     try {
       const imageBlob = await this.api.getImage().toPromise();
       if (imageBlob) {

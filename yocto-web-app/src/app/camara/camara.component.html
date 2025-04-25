@@ -1,1 +1,22 @@
-<img [src]="imageSrc" alt="Imagen capturada" *ngIf="imageSrc">
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">     Cámara     </h1>
+</div>
+
+<div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div *ngIf="!imageSrc">Cargando imagen...</div>
+        <img [src]="imageSrc" alt="Imagen capturada" *ngIf="imageSrc" style="width: 450px; height: auto; border: 1px solid #ddd;" >
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    
+        <!-- Necesito crear un boton que sea del largo de la pantalla-->
+        <button (click)="setImage()"  class="align-items-center btn btn-primary" style="width: 70%; height: 50px;">
+            Tomar Foto
+        </button>
+</div>
