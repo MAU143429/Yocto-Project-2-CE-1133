@@ -12,8 +12,8 @@ export class CamaraComponent implements OnInit {
   constructor(private api: APIService) { }
 
   ngOnInit(): void {
-    this.loadImage(); // Primero intenta cargar la imagen guardada
-    this.setImage();  // Luego actualiza con la nueva imagen
+    //this.loadImage(); // Primero intenta cargar la imagen guardada
+    //this.setImage();  // Luego actualiza con la nueva imagen
   }
 
   private loadImage() {
