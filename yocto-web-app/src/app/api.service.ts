@@ -51,4 +51,8 @@ export class APIService {
       responseType: 'blob' 
     });
   }
+
+  getAllDoorsState(){
+    return this.http.get(`${this.apiUrl}/get_all_doors_state`, this.httpOptions);
+  }
 }

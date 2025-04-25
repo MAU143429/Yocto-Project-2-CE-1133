@@ -85,6 +85,31 @@ def get_door_state(door_id):
             "response": "",
             "error": f'La puerta "{door_id}" no existe.'
         })
+    
+def cambiar_id_texto(door_id):
+    # Cambiar el id del texto
+    if door_id == 16:
+        return "puerta_delantera"
+    elif door_id == 23: 
+        return "puerta_bano"
+    elif door_id == 24:
+        return "puerta_cuarto1"
+    else:
+        return "puerta_cuarto2"
+
+@app.route('/get_all_doors_state', methods=['GET'])
+def get_all_doors_state():
+    # Simulando el estado de las puertas
+    estados = {}
+    for door_id in PIN_INPUTS:
+        nuevo_id = cambiar_id_texto(door_id)
+        estado = 1 # AQUI HAY QUE PONER NUESTRA LOGICA
+        estados[nuevo_id] = estado
+    return jsonify({
+        "status": "ok",
+        "response": estados,
+        "error": ""
+    })
 
 # Endpoint para servir la imagen capturada
 @app.route('/capture', methods=['GET'])

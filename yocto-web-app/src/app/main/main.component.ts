@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { APIService } from '../api.service';
 import { SharedService } from '../shared.service';
@@ -8,7 +8,7 @@ import { SharedService } from '../shared.service';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   data_luces:any = {};
   estados_luces:any = {};
   estados_puertas:any = {};
@@ -18,9 +18,6 @@ export class MainComponent implements OnInit {
   setAllEstados() {
     var luces_info: any = this.shared.getLuces();
     const data_luces: any = this.shared.getDataLuces();
-
-    console.log("Luces info:");
-    console.log(data_luces);
 
     Object.keys(luces_info).forEach((luz) => {
       if(luces_info[luz]) {
@@ -41,8 +38,6 @@ export class MainComponent implements OnInit {
   setAllEstadosPuertas() {
     var puertas_info: any = this.shared.getPuertas();
     const data_puertas: any = this.shared.getDataPuertas();
-    console.log("Puertas info:");
-    console.log(data_puertas);
     
     Object.keys(puertas_info).forEach((puerta) => {
       if(puertas_info[puerta]) {
@@ -104,8 +99,6 @@ export class MainComponent implements OnInit {
     
     this.estados_puertas = this.shared.getPuertas();
     this.estados_luces = this.shared.getLuces();
-    console.log("NUEVOOOOOO");
-    console.log(this.estados_luces);
     
     this.setAllEstados();
     this.setAllEstadosPuertas();
@@ -116,5 +109,8 @@ export class MainComponent implements OnInit {
     this.shared.setEstadoLuz(id);
   }
 
+  ngOnDestroy(): void {
+      
+  }
 
 }

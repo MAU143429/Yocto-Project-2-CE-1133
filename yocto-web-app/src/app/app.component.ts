@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { SharedService } from './shared.service';
 import { forkJoin } from 'rxjs';
 import { OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
     puerta_cuarto2: null
   };
     
-  private lucesSubscription: Subscription;
+  private puertasSubscription!: Subscription;
 
   constructor(private api: APIService, private sharedService: SharedService) {
     this.sharedService.register$.subscribe(valor => {
@@ -36,10 +36,6 @@ export class AppComponent implements OnInit {
 
     this.sharedService.login$.subscribe(nuevo => {
       this.entrada = nuevo;
-    });
-
-    this.lucesSubscription = this.sharedService.luces$.subscribe(luces => {
-      this.luces_aux = luces;
     });
   }
 
@@ -104,9 +100,6 @@ export class AppComponent implements OnInit {
     var luces_info: any = this.sharedService.getLuces();
     const data_luces: any = this.sharedService.getDataLuces();
 
-    console.log("Luces info:");
-    console.log(data_luces);
-
     Object.keys(luces_info).forEach((luz) => {
       if(luces_info[luz]) {
         data_luces[luz].className = this.sharedService.getClaseEncendido();
@@ -126,8 +119,7 @@ export class AppComponent implements OnInit {
   setAllEstadosPuertas() {
     var puertas_info: any = this.sharedService.getPuertas();
     const data_puertas: any = this.sharedService.getDataPuertas();
-    console.log("Puertas info:");
-    console.log(data_puertas);
+
     
     Object.keys(puertas_info).forEach((puerta) => {
       if(puertas_info[puerta]) {
@@ -145,10 +137,44 @@ export class AppComponent implements OnInit {
     });
   }
 
+  cambiar_a_boolean(value: number): boolean {
+    return value === 1;
+  }
+
+  private verificarEstadoPuertas(): void {
+    this.api.getAllDoorsState().subscribe((data: any) => {
+      const info = data.response;
+      const puertas_ahora = this.puertas_aux;
+      Object.keys(info).forEach((puerta) => {
+        const estado = this.cambiar_a_boolean(info[puerta]);
+        puertas_ahora[puerta] = estado;
+        console.log(`Estado de ${puerta}: ${estado}`);
+      });
+      this.sharedService.setPuertas(puertas_ahora);
+      this.setAllEstadosPuertas();
+    });
+  }
+
+  private iniciarMonitorPuertas(): void {
+    this.puertasSubscription = interval(5000).subscribe(() => {
+      this.verificarEstadoPuertas();
+    });
+    
+    // Llamada inmediata al cargar
+    this.verificarEstadoPuertas(); 
+  }
+
+  private detenerMonitorPuertas(): void {
+    if (this.puertasSubscription) {
+      this.puertasSubscription.unsubscribe();
+    }
+  }
+
   ngOnInit(): void {
     this.testConnection();
     this.loadAllLights();
     this.loadAllPuertas();
+    this.iniciarMonitorPuertas();
     
     setTimeout(() => {
       this.setAllEstados();
@@ -157,7 +183,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.lucesSubscription.unsubscribe();
+    this.detenerMonitorPuertas();
   }
 
   title = 'yocto-web-app';
