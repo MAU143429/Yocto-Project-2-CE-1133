@@ -164,7 +164,7 @@ def index():
         'error': ''
     })
 
-if __name__ in '__main__':
+if __name__ == '__main__':
     # Create a db and table
     with app.app_context():
         db.create_all()
