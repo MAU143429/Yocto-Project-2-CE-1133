@@ -65,11 +65,11 @@ setup_pins()
 @app.route('/toggle-light/<light_id>/<value>', methods=['POST'])
 def toggle_light(light_id, value):
 
-    if light_id in PIN_OUTPUTS and value in [0, 1]:
-        lib.digitalWrite(light_id, value)
+    if int(light_id) in PIN_OUTPUTS and int(value) in [0, 1]:
+        lib.digitalWrite(int(light_id), int(value))
         return jsonify({
             "status": "ok",
-            "response": "",
+            "response": "La luz {light_id} cambió de valor a " + str(value),
             "error": ""
         })
     else:
@@ -80,16 +80,14 @@ def toggle_light(light_id, value):
         })
 
 
-@app.route('/get_light/<light_id>', methods=['GET', 'OPTIONS'])
+@app.route('/get_light/<light_id>', methods=['GET'])
 def get_light_state(light_id):
-    if request.method == 'OPTIONS':
-        return {}, 200  # Respuesta vacía para preflight
-    
-    if light_id in PIN_OUTPUTS:
-        value = lib.digitalRead(light_id)
+  
+    if int(light_id) in PIN_OUTPUTS:
+        value = lib.digitalRead(int(light_id))
         return jsonify({
             "status": "ok",
-            "response": "{value}",
+            "response": value,
             "error": ""
         })
     else:
@@ -100,16 +98,14 @@ def get_light_state(light_id):
         })
 
 
-@app.route('/get_door_state/<door_id>', methods=['GET', 'OPTIONS'])
+@app.route('/get_door_state/<door_id>', methods=['GET'])
 def get_door_state(door_id):
-    if request.method == 'OPTIONS':
-        return {}, 200  # Respuesta vacía para preflight
     
-    if door_id in PIN_INPUTS:
-        value = lib.digitalRead(door_id)
+    if int(door_id) in PIN_INPUTS:
+        value = lib.digitalRead(int(door_id))
         return jsonify({
             "status": "ok",
-            "response": "{value}",
+            "response": value,
             "error": ""
         })
     else:
