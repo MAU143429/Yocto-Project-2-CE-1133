@@ -15,62 +15,50 @@ export class MainComponent implements OnInit {
   data_puertas:any = {};
   constructor(private api:APIService, private shared:SharedService) {};
 
-  setAllEstados(){
-    Object.keys(this.estados_luces).forEach((luz) => {
-      console.log(this.estados_luces[luz]);
-      if(this.estados_luces[luz]){
-        this.data_luces[luz].className = this.shared.getClaseEncendido();
-        this.data_luces[luz+"TEXTO"].className = this.shared.getTextoEncendido();
-        this.data_luces[luz+"ICONO"].className = this.shared.getIconoEncendido();
-        this.data_luces[luz+"ICONO"].style.color = this.shared.getColorEncendido();
+  setAllEstados() {
+    var luces_info: any = this.shared.getLuces();
+    const data_luces: any = this.shared.getDataLuces();
+
+    console.log("Luces info:");
+    console.log(data_luces);
+
+    Object.keys(luces_info).forEach((luz) => {
+      if(luces_info[luz]) {
+        data_luces[luz].className = this.shared.getClaseEncendido();
+        data_luces[luz+"TEXTO"].className = this.shared.getTextoEncendido();
+        data_luces[luz+"ICONO"].className = this.shared.getIconoEncendido();
+        data_luces[luz+"ICONO"].style.color = this.shared.getColorEncendido();
       }
-      else{
-        this.data_luces[luz].className = this.shared.getClaseApagado();
-        this.data_luces[luz+"TEXTO"].className = this.shared.getTextoApagado();
-        this.data_luces[luz+"ICONO"].className = this.shared.getIconoApagado();
-        this.data_luces[luz+"ICONO"].style.color = this.shared.getColorApagado();
-      }
-    });
-    Object.keys(this.estados_puertas).forEach((puerta) => {
-      console.log(this.estados_puertas[puerta]);
-      if(this.estados_puertas[puerta]){
-        this.data_puertas[puerta].className = this.shared.getClaseEncendido();
-        this.data_puertas[puerta+"TEXTO"].className = this.shared.getTextoEncendido();
-        this.data_puertas[puerta+"ICONO"].className = this.shared.getIconoEncendido();
-        this.data_puertas[puerta+"ICONO"].style.color = this.shared.getColorEncendido();
-      }
-      else{
-        this.data_puertas[puerta].className = this.shared.getClaseApagado();
-        this.data_puertas[puerta+"TEXTO"].className = this.shared.getTextoApagado();
-        this.data_puertas[puerta+"ICONO"].className = this.shared.getIconoApagado();
-        this.data_puertas[puerta+"ICONO"].style.color = this.shared.getColorApagado();
+      else {
+        data_luces[luz].className = this.shared.getClaseApagado();
+        data_luces[luz+"TEXTO"].className = this.shared.getTextoApagado();
+        data_luces[luz+"ICONO"].className = this.shared.getIconoApagado();
+        data_luces[luz+"ICONO"].style.color = this.shared.getColorApagado();
       }
     });
   }
 
-  saveImageLocally(imageBlob: Blob) {
-    const reader = new FileReader();
-    reader.readAsDataURL(imageBlob);
+  setAllEstadosPuertas() {
+    var puertas_info: any = this.shared.getPuertas();
+    const data_puertas: any = this.shared.getDataPuertas();
+    console.log("Puertas info:");
+    console.log(data_puertas);
     
-    reader.onload = () => {
-      const base64Image = reader.result as string;
-      localStorage.setItem('saved_image', base64Image);
-      
-      // Para usarla después:
-      // <img [src]="localStorage.getItem('saved_image')">
-    };
-  }
-
-  setImage(){
-    this.api.getImage().subscribe((response: Blob) => {
-      const imageBlob = new Blob([response], { type: 'image/jpeg' });
-      const imageUrl = URL.createObjectURL(imageBlob);
-      //const imgElement = document.getElementById('image') as HTMLImageElement;
-      //imgElement.src = imageUrl;
-      this.saveImageLocally(imageBlob);
+    Object.keys(puertas_info).forEach((puerta) => {
+      if(puertas_info[puerta]) {
+        data_puertas[puerta].className = this.shared.getClaseEncendido();
+        data_puertas[puerta+"TEXTO"].className = this.shared.getTextoEncendido();
+        data_puertas[puerta+"ICONO"].className = this.shared.getIconoEncendido();
+        data_puertas[puerta+"ICONO"].style.color = this.shared.getColorEncendido();
+      }
+      else {
+        data_puertas[puerta].className = this.shared.getClaseApagado();
+        data_puertas[puerta+"TEXTO"].className = this.shared.getTextoApagado();
+        data_puertas[puerta+"ICONO"].className = this.shared.getIconoApagado();
+        data_puertas[puerta+"ICONO"].style.color = this.shared.getColorApagado();
+      }
     });
   }
-
 
   ngOnInit(): void {
     const data = {
@@ -112,18 +100,16 @@ export class MainComponent implements OnInit {
       "puerta_cuarto2ICONO": document.getElementById("puerta_cuarto2ICONO") as HTMLInputElement,
     }
     this.shared.setDataPuertas(dataPuer);
-    this.estados_puertas = this.shared.getPuertas();
-
     this.shared.setDataLuces(data);
+    
+    this.estados_puertas = this.shared.getPuertas();
     this.estados_luces = this.shared.getLuces();
+    console.log("NUEVOOOOOO");
+    console.log(this.estados_luces);
+    
     this.setAllEstados();
-    this.setImage();
-    console.log(localStorage.getItem('saved_image'));
-    /*
-    this.data_luces.luz1.className = this.shared.getClaseApagado();
-    this.data_luces.luz1TEXTO.className = this.shared.getTextoApagado();
-    this.data_luces.luz1ICONO.className = this.shared.getIconoApagado();
-    this.data_luces.luz1ICONO.style.color = this.shared.getColorApagado(); */
+    this.setAllEstadosPuertas();
+    
   };
   
   toggleLightAction(id: string) {
