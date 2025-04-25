@@ -32,6 +32,10 @@ export class APIService {
     return this.http.get(`${this.apiUrl}/get_light/${id}`, this.httpOptions);
   }
 
+  getPuerta(id: string) {
+    return this.http.get(`${this.apiUrl}/get_door_state/${id}`, this.httpOptions);
+  }
+
   getAllLight() {
     return this.http.get(`${this.apiUrl}/lights`, this.httpOptions);
   }

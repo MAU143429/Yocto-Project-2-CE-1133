@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class SharedService {
 
   lucesIniciales: any = {};
+  puertasIniciales: any = {};
   constructor() { }
 
   // VARIABLES ===================================================================================================================
@@ -18,6 +19,9 @@ export class SharedService {
 
   private luces = new BehaviorSubject<JSON>(this.lucesIniciales);
   luces$ = this.luces.asObservable();
+
+  private puertas = new BehaviorSubject<JSON>(this.puertasIniciales);
+  puertas$ = this.puertas.asObservable();
 
   private color_encendido = new BehaviorSubject<string>("#1cc88a");
   color_encendido$ = this.color_encendido.asObservable();
@@ -66,6 +70,25 @@ export class SharedService {
     });
   data_luces$ = this.data_luces.asObservable();
 
+  private data_puertas = new BehaviorSubject<any>({
+    "puerta_delantera": document.getElementById("puerta_delantera") as HTMLDivElement,
+    "puerta_delanteraTEXTO": document.getElementById("puerta_delanteraTEXTO") as HTMLDivElement,
+    "puerta_delanteraICONO": document.getElementById("puerta_delanteraICONO") as HTMLInputElement,
+
+    "puerta_bano": document.getElementById("puerta_bano") as HTMLDivElement,
+    "puerta_banoTEXTO": document.getElementById("puerta_banoTEXTO") as HTMLDivElement,
+    "puerta_banoICONO": document.getElementById("puerta_banoICONO") as HTMLInputElement,
+
+    "puerta_cuarto1": document.getElementById("puerta_cuarto1") as HTMLDivElement,
+    "puerta_cuarto1TEXTO": document.getElementById("puerta_cuarto1TEXTO") as HTMLDivElement,
+    "puerta_cuarto1ICONO": document.getElementById("puerta_cuarto1ICONO") as HTMLInputElement,
+
+    "puerta_cuarto2": document.getElementById("puerta_cuarto2") as HTMLDivElement,
+    "puerta_cuarto2TEXTO": document.getElementById("puerta_cuarto2TEXTO") as HTMLDivElement,
+    "puerta_cuarto2ICONO": document.getElementById("puerta_cuarto2ICONO") as HTMLInputElement,
+  });
+  data_puertas$ = this.data_puertas.asObservable();
+
   // =============================================================================================================================
 
   cambiarRegister() {
@@ -83,8 +106,17 @@ export class SharedService {
     this.luces.next(luces);
   }
 
+  setPuertas(puertas: any) {
+    console.log('Actualizando puertas en servicio:', puertas); // ← Para depuración
+    this.puertas.next(puertas);
+  }
+
   setDataLuces(data: any) {
     this.data_luces.next(data);
+  }
+
+  setDataPuertas(data: any) {
+    this.data_puertas.next(data);
   }
 
   // ============================================================================================================================
@@ -94,6 +126,12 @@ export class SharedService {
     const currentLuces = this.luces.getValue();
     console.log("Obteniendo luces actuales: ", currentLuces);
     return currentLuces;
+  }
+
+  getPuertas() {
+    const currentPuertas = this.puertas.getValue();
+    console.log("Obteniendo puertas actuales: ", currentPuertas);
+    return currentPuertas;
   }
 
   getColorEncendido() {
@@ -130,6 +168,10 @@ export class SharedService {
 
   getDataLuces() {
     return this.data_luces.getValue();
+  }
+
+  getDataPuertas() {
+    return this.data_puertas.getValue();
   }
 
 }

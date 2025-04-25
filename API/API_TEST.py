@@ -70,13 +70,11 @@ def get_light_state(light_id):
 
 @app.route('/get_door_state/<door_id>', methods=['GET', 'OPTIONS'])
 def get_door_state(door_id):
-    if request.method == 'OPTIONS':
-        return {}, 200  # Respuesta vacía para preflight
     
     if int(door_id) in PIN_INPUTS:
         return jsonify({ 
             "status": "ok",
-            "response": "0",
+            "response": 0,
             "error": ""
         })
     else:
