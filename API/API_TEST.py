@@ -34,6 +34,71 @@ PIN_OUTPUTS = [5, 6, 17, 22, 27]
 # Puertas
 PIN_INPUTS = [16, 23, 24, 25]
 
+class User(db.Model):
+    """User Model
+
+    Args:
+        db (_type_): Model from SQL Alchemy
+
+    Returns:
+        string: Only check_password returns, else used to store user info
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(400), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+@app.route('/login/<string:username>/<string:password>', methods=['GET'])
+def login(username, password):
+    user = User.query.filter_by(username=username).first()
+
+    
+    if user and check_password_hash(user.password_hash, password):
+        session['username'] = username
+        return jsonify({
+            'status': 'ok',
+            'response': {'username': username},
+            'error': ''
+        })
+    else:
+        return jsonify({
+            'status': 'error',
+            'response': '',
+            'error': 'Usuario o contraseña inválidos'
+        })
+    
+    
+@app.route('/register/<string:username>/<string:password>', methods=['POST'])
+def register(username, password):
+    # Verificar si el usuario ya existe
+    user = User.query.filter_by(username=username).first()
+    
+    if user:
+        return jsonify({
+            'status': 'Error',
+            'response': '',
+            'error': 'Ya existe el usuario'
+        })
+    
+    # Crear nuevo usuario
+    new_user = User(username=username)
+    new_user.set_password(password)  # Asume que tienes este método para hashear la contraseña
+    db.session.add(new_user)
+    db.session.commit()
+    session['username'] = username  # Opcional: iniciar sesión automáticamente
+
+    return jsonify({
+        'status': 'Ok',
+        'response': {'username': username},
+        'error': ''
+    })
+
+
 
 @app.route('/toggle-light/<light_id>/<value>', methods=['POST'])
 def toggle_light(light_id, value):

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { APIService } from '../api.service';
 import { SharedService } from '../shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,7 @@ import { SharedService } from '../shared.service';
 })
 export class LoginComponent {
 
-  constructor(private api:APIService, private sharedService: SharedService ) {}
+  constructor(private api:APIService, private sharedService: SharedService, private router:Router ) {}
 
   loginRequest(form:any): void {
     // Aquí puedes implementar la lógica para manejar el inicio de sesión
@@ -20,6 +21,7 @@ export class LoginComponent {
         if (response.status === 'ok') {
           console.log('Login exitoso', response);
           localStorage.setItem('username', response.response.username);
+          this.router.navigate(['']); // Redirigir al usuario a la página de inicio
           // Redirigir al usuario (ej: usando Router)
         } else {
           console.error('Error del servidor:', response.error);

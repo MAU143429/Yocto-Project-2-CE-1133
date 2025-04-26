@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SharedService } from '../shared.service';
 import { APIService } from '../api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -8,7 +9,7 @@ import { APIService } from '../api.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-  constructor(private sharedService: SharedService, private api:APIService) { }
+  constructor(private sharedService: SharedService, private api:APIService, private router:Router) { }
 
   cambiarRegister(){
     this.sharedService.cambiarRegister();
@@ -20,6 +21,9 @@ export class RegisterComponent {
       next: (response: any) => {
         if (response.status === 'ok') {
           console.log('REGISTRO exitoso', response);
+          alert('Registro exitoso');
+          localStorage.setItem('username', response.response.username);
+          this.router.navigate(['/login']); // Redirigir al usuario a la página de inicio de sesión
           // Guardar datos de sesión (ej: en localStorage)
           //localStorage.setItem('username', response.response.username);
           // Redirigir al usuario (ej: usando Router)

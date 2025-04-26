@@ -52,7 +52,8 @@ class User(db.Model):
 @app.route('/login/<string:username>/<string:password>', methods=['GET'])
 def login(username, password):
     user = User.query.filter_by(username=username).first()
-    
+    hash_password = generate_password_hash(password)
+
     if user:
         return jsonify({
             'status': 'ok',
@@ -60,7 +61,7 @@ def login(username, password):
             'error': ''
         })
     
-    if user and check_password_hash(user.password_hash, password):
+    if user and check_password_hash(user.password_hash, hash_password):
         session['username'] = username
         return jsonify({
             'status': 'ok',
