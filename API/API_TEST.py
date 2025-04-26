@@ -99,7 +99,6 @@ def register(username, password):
     })
 
 
-
 @app.route('/toggle-light/<light_id>/<value>', methods=['POST'])
 def toggle_light(light_id, value):
     # imprimir el tipo de dato de light_id y de value

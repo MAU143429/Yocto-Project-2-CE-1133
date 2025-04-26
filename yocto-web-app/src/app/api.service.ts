@@ -7,8 +7,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class APIService {
-  //private apiUrl = 'http://192.168.0.150:5000';
-  private apiUrl = 'http://127.0.0.1:5000';
+  private apiUrl = 'http://192.168.0.150:5000';
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
