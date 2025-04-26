@@ -88,16 +88,12 @@ def register(username, password):
     # Crear nuevo usuario
     new_user = User(username=username)
     new_user.set_password(password)  # Asume que tienes este método para hashear la contraseña
-    print("Este es el username: " + username)
-    print(f"Este es el password: {password}")
-    print(f"Este es el password hash creado: {generate_password_hash(password)}")   
-    print(f"Este es el password hash guardado: {new_user.password_hash}")
     db.session.add(new_user)
     db.session.commit()
     session['username'] = username  # Opcional: iniciar sesión automáticamente
 
     return jsonify({
-        'status': 'Ok',
+        'status': 'ok',
         'response': {'username': username},
         'error': ''
     })

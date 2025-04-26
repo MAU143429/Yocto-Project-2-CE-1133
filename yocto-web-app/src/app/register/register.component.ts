@@ -19,14 +19,12 @@ export class RegisterComponent {
   generarRegistro(form:any){
     this.api.registerRequest(form.value).subscribe({
       next: (response: any) => {
-        if (response.status === 'ok') {
-          console.log('REGISTRO exitoso', response);
-          alert('Registro exitoso');
+        if (response.status == 'ok') {
           localStorage.setItem('username', response.response.username);
-          this.router.navigate(['/login']); // Redirigir al usuario a la página de inicio de sesión
-          // Guardar datos de sesión (ej: en localStorage)
-          //localStorage.setItem('username', response.response.username);
-          // Redirigir al usuario (ej: usando Router)
+
+          alert("Registro completado con éxito");
+        
+          this.sharedService.setRegister(false);
         } else {
           console.error('Error del servidor:', response.error);
           alert(response.error); // Muestra feedback al usuario

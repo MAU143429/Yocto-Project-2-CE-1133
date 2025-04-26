@@ -148,7 +148,6 @@ export class AppComponent implements OnInit {
       Object.keys(info).forEach((puerta) => {
         const estado = this.cambiar_a_boolean(info[puerta]);
         puertas_ahora[puerta] = estado;
-        console.log(`Estado de ${puerta}: ${estado}`);
       });
       this.sharedService.setPuertas(puertas_ahora);
       this.setAllEstadosPuertas();

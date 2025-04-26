@@ -113,12 +113,10 @@ export class SharedService {
   // FUNCIONES SET ===============================================================================================================
 
   setLuces(luces: any) {
-    console.log('Actualizando luces en servicio:', luces); // ← Para depuración
     this.luces.next(luces);
   }
 
   setPuertas(puertas: any) {
-    console.log('Actualizando puertas en servicio:', puertas); // ← Para depuración
     this.puertas.next(puertas);
   }
 
@@ -135,13 +133,11 @@ export class SharedService {
   // FUNCIONES GET
   getLuces() {
     const currentLuces = this.luces.getValue();
-    console.log("Obteniendo luces actuales: ", currentLuces);
     return currentLuces;
   }
 
   getPuertas() {
     const currentPuertas = this.puertas.getValue();
-    console.log("Obteniendo puertas actuales: ", currentPuertas);
     return currentPuertas;
   }
 
@@ -227,7 +223,6 @@ export class SharedService {
     luces[luz] = !luces[luz];
     // @ts-ignore
     this.api.setLight(this.cambiar_id_luz(luz), this.cambiadorEstado(luces[luz])).subscribe((response: any) => {
-      console.log("Estado de la luz actualizado:", response);
       this.luces.next(luces);
       this.cambiarColorBoton(luz);
     }, (error: any) => {
