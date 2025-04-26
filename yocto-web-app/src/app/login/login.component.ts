@@ -21,8 +21,9 @@ export class LoginComponent {
         if (response.status === 'ok') {
           console.log('Login exitoso', response);
           localStorage.setItem('username', response.response.username);
-          this.router.navigate(['']); // Redirigir al usuario a la página de inicio
-          // Redirigir al usuario (ej: usando Router)
+          
+          this.sharedService.setLogin(false);
+          
         } else {
           console.error('Error del servidor:', response.error);
           alert(response.error); // Muestra feedback al usuario

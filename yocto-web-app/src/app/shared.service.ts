@@ -234,4 +234,10 @@ export class SharedService {
       console.error("Error al actualizar el estado de la luz:", error);
     });
   }
+  setLogin(value: boolean){
+    this.login.next(value);
+  }
+  setRegister(value: boolean){
+    this.register.next(value);
+  }
 }
