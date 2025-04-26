@@ -23,8 +23,10 @@ export class APIService {
   }
 
   registerRequest(formData: any) {
-  
-    return this.http.post(`${this.apiUrl}/register/${formData.username}/${formData.password}`, this.httpOptions);
+
+    console.log("DATA DEL NUEVO USUARIO");
+    console.log(formData);
+    return this.http.post(`${this.apiUrl}/register/${formData.username}/${formData.password1}`, this.httpOptions);
   }
 
   getPrueba() {

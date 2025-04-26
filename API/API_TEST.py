@@ -55,10 +55,10 @@ class User(db.Model):
 
 @app.route('/login/<string:username>/<string:password>', methods=['GET'])
 def login(username, password):
-    user = User.query.filter_by(username=username).first()
-
+    user = User.query.filter_by(username=username).first() is not None
+    user_obj = User.query.filter_by(username=username).first()
     
-    if user and check_password_hash(user.password_hash, password):
+    if user and check_password_hash(user_obj.password_hash ,password):
         session['username'] = username
         return jsonify({
             'status': 'ok',
@@ -76,7 +76,7 @@ def login(username, password):
 @app.route('/register/<string:username>/<string:password>', methods=['POST'])
 def register(username, password):
     # Verificar si el usuario ya existe
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(username=username).first() is not None
     
     if user:
         return jsonify({
@@ -88,6 +88,10 @@ def register(username, password):
     # Crear nuevo usuario
     new_user = User(username=username)
     new_user.set_password(password)  # Asume que tienes este método para hashear la contraseña
+    print("Este es el username: " + username)
+    print(f"Este es el password: {password}")
+    print(f"Este es el password hash creado: {generate_password_hash(password)}")   
+    print(f"Este es el password hash guardado: {new_user.password_hash}")
     db.session.add(new_user)
     db.session.commit()
     session['username'] = username  # Opcional: iniciar sesión automáticamente
