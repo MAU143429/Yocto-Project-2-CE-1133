@@ -21,7 +21,6 @@ export class LoginComponent {
         if (response.status === 'ok') {
           console.log('Login exitoso', response);
           localStorage.setItem('username', response.response.username);
-          
           this.sharedService.setLogin(false);
           
         } else {

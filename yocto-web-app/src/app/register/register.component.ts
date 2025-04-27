@@ -20,11 +20,10 @@ export class RegisterComponent {
     this.api.registerRequest(form.value).subscribe({
       next: (response: any) => {
         if (response.status == 'ok') {
-          localStorage.setItem('username', response.response.username);
-
           alert("Registro completado con éxito");
         
           this.sharedService.setRegister(false);
+          this.sharedService.setLogin(true);
         } else {
           console.error('Error del servidor:', response.error);
           alert(response.error); // Muestra feedback al usuario

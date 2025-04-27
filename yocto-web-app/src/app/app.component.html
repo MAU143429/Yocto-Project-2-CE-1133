@@ -7,7 +7,8 @@
         <app-login></app-login>
       </div>
       
-      <div *ngIf="!entrada">
+      <!-- Solo muestra app-base si NO está en modo entrada Y usuario no está vacío -->
+      <div *ngIf="!entrada && usuario !== ''">
         <app-base></app-base>
       </div>
 </div>

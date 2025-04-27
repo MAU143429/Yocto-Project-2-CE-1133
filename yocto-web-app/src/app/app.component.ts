@@ -12,6 +12,7 @@ import { interval, Subscription } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  usuario: string = "";
   luces_aux: any = {
     luz1: null,
     luz2: null,
@@ -168,8 +169,14 @@ export class AppComponent implements OnInit {
       this.puertasSubscription.unsubscribe();
     }
   }
+  
 
   ngOnInit(): void {
+    this.usuario = localStorage.getItem('username') || "";
+    if(this.usuario !== ""){
+      this.sharedService.setLogin(false);
+      this.sharedService.setRegister(false);
+    }
     this.testConnection();
     this.loadAllLights();
     this.loadAllPuertas();

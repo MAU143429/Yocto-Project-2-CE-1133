@@ -13,7 +13,8 @@ export class MainComponent implements OnInit, OnDestroy {
   data_luces:any = {};
   estados_luces:any = {};
   estados_puertas:any = {};
-  data_puertas:any = {};
+  data_puertas:any = {};  
+  usuario:string = "";
   constructor(private api:APIService, private shared:SharedService) {};
 
   setAllEstados() {
@@ -103,6 +104,8 @@ export class MainComponent implements OnInit, OnDestroy {
     
     this.setAllEstados();
     this.setAllEstadosPuertas();
+
+    
     
   };
   
