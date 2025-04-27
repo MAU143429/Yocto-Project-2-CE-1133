@@ -25,7 +25,7 @@ export class SharedService {
   private register = new BehaviorSubject<boolean>(false);
   register$ = this.register.asObservable();
 
-  private login = new BehaviorSubject<boolean>(true);
+  private login = new BehaviorSubject<boolean>(false);
   login$ = this.login.asObservable();
 
   private luces = new BehaviorSubject<JSON>(this.lucesIniciales);

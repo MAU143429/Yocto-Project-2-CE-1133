@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { APIService } from '../api.service';
 import { SharedService } from '../shared.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-main',
@@ -107,6 +108,18 @@ export class MainComponent implements OnInit, OnDestroy {
   
   toggleLightAction(id: string) {
     this.shared.setEstadoLuz(id);
+  }
+
+  mostrarImagenPopup() {
+    Swal.fire({
+      title: 'Título del Popup',
+      text: 'Mensaje adicional',
+      imageUrl: 'assets/tu-imagen.png', // Ruta a tu imagen
+      imageWidth: 400, // Ancho de la imagen
+      imageHeight: 200, // Alto de la imagen
+      imageAlt: 'Descripción de la imagen',
+      confirmButtonText: 'Aceptar'
+    });
   }
 
   ngOnDestroy(): void {

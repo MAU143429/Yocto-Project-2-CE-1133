@@ -12,6 +12,7 @@ import { CamaraComponent } from './camara/camara.component';
 import { LoginComponent } from './login/login.component';
 import { BaseComponent } from './base/base.component';
 import { RegisterComponent } from './register/register.component';
+import { FooterComponent } from './footer/footer.component';
 
 const appRoutes:Routes=[
   {path:'', component: MainComponent},
@@ -30,7 +31,8 @@ const appRoutes:Routes=[
     CamaraComponent,
     LoginComponent,
     BaseComponent,
-    RegisterComponent
+    RegisterComponent,
+    FooterComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
